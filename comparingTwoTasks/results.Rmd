@@ -1,0 +1,274 @@
+---
+title: "Comparing Two Tasks"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+library(ggplot2)
+library(ggExtra)
+library(ggalt)
+library(plotly)
+library(cluster)
+library(factoextra)
+data <- read.csv(file="./data.csv")
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+data_scaled_names <- cbind(data[1:4],data_scaled)
+names(data_scaled_names)[5] <- 'task1_zscore'
+names(data_scaled_names)[6] <- 'task2_zscore'
+```
+
+```{r echo=FALSE}
+excellent <- 1.5
+increase <- 1
+decrease <- 1
+poor <- -1.5
+```
+
+## Cohort Results
+```{r echo=FALSE}
+theme_set(theme_bw())
+y9all <- ggplot(data, aes(task1, task2, color = class, label = name)) + 
+  geom_point(size=1, alpha=1/2) +
+  geom_encircle(data=subset(data_scaled_names, (task1_zscore+task2_zscore)/2>excellent), colour="#00AA00", fill="#00AA0022", spread=0.01) +
+  geom_encircle(data=subset(data_scaled_names, (task2_zscore-task1_zscore)>increase), colour="#0000AA", fill="#0000AA22", spread=0.01) +
+  geom_encircle(data=subset(data_scaled_names, (task1_zscore-task2_zscore)>decrease), colour="#AA0000", fill="#AA000022", spread=0.01) +
+  geom_encircle(data=subset(data_scaled_names, (task1_zscore+task2_zscore)/2<poor), colour="#FF0000", fill="#FF000022", spread=0.01) +
+  xlim(0, 100) +
+  ylim(0, 100)
+ggMarginal(y9all,, groupColour = TRUE, groupFill = TRUE)
+```
+
+<span style="color:#00AA00">Students with an average z-score above `r excellent`</span>
+```{r echo=FALSE}
+goodz1 <- subset(data_scaled_names, (task1_zscore+task2_zscore)/2>excellent)
+goodz1
+```
+
+<span style="color:#0000AA">Students who increased by a z-score of `r increase` or more</span>
+```{r echo=FALSE}
+improvez1 <- subset(data_scaled_names, (task2_zscore-task1_zscore)>increase)
+improvez1
+```
+
+<span style="color:#AA0000">Students who decreased by a z-score of `r decrease` or more</span>
+```{r echo=FALSE}
+worsez1 <- subset(data_scaled_names, (task1_zscore-task2_zscore)>=increase)
+worsez1
+```
+
+<span style="color:#FF0000">Students with an average z-score below `r poor`</span>
+```{r echo=FALSE}
+poorz1 <- subset(data_scaled_names, (task1_zscore+task2_zscore)/2<poor)
+poorz1
+```
+
+## Interactive Chart
+```{r echo=FALSE}
+INT <- 
+  ggplot(data, aes(task1, task2, color = class)) + 
+  geom_point(size=1, aes(text=name), alpha=1/2) +
+  theme_bw() + 
+  geom_segment(aes(x = 0, y = 0, xend = 100, yend = 100), color="black", linetype=1, size=.25)
+
+ggplotly(INT) %>% config(displayModeBar = F)
+```
+
+## Clustered Groups {.tabset .tabset-fade}
+
+### 2 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=2, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a2 <- c(subset(sorted_data, cluster==1)[2])
+b2 <- c(subset(sorted_data, cluster==2)[2])
+list(a2, b2)
+```
+
+### 3 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=3, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a3 <- c(subset(sorted_data, cluster==1)[2])
+b3 <- c(subset(sorted_data, cluster==2)[2])
+c3 <- c(subset(sorted_data, cluster==3)[2])
+list(a3, b3, c3)
+```
+
+### 4 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=4, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a4 <- c(subset(sorted_data, cluster==1)[2])
+b4 <- c(subset(sorted_data, cluster==2)[2])
+c4 <- c(subset(sorted_data, cluster==3)[2])
+d4 <- c(subset(sorted_data, cluster==4)[2])
+list(a4, b4, c4, d4)
+```
+
+### 5 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=5, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a5 <- c(subset(sorted_data, cluster==1)[2])
+b5 <- c(subset(sorted_data, cluster==2)[2])
+c5 <- c(subset(sorted_data, cluster==3)[2])
+d5 <- c(subset(sorted_data, cluster==4)[2])
+e5 <- c(subset(sorted_data, cluster==5)[2])
+list(a5, b5, c5, d5, e5)
+```
+
+### 6 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=6, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a6 <- c(subset(sorted_data, cluster==1)[2])
+b6 <- c(subset(sorted_data, cluster==2)[2])
+c6 <- c(subset(sorted_data, cluster==3)[2])
+d6 <- c(subset(sorted_data, cluster==4)[2])
+e6 <- c(subset(sorted_data, cluster==5)[2])
+f6 <- c(subset(sorted_data, cluster==6)[2])
+list(a6, b6, c6, d6, e6, f6)
+```
+
+### 7 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=7, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a7 <- c(subset(sorted_data, cluster==1)[2])
+b7 <- c(subset(sorted_data, cluster==2)[2])
+c7 <- c(subset(sorted_data, cluster==3)[2])
+d7 <- c(subset(sorted_data, cluster==4)[2])
+e7 <- c(subset(sorted_data, cluster==5)[2])
+f7 <- c(subset(sorted_data, cluster==6)[2])
+g7 <- c(subset(sorted_data, cluster==7)[2])
+list(a7, b7, c7, d7, e7, f7, g7)
+```
+
+### 8 Clusters {.tabset .tabset-pills}
+
+```{r echo=FALSE}
+data.labels = data$class
+data_unlabelled <- data[3:4]
+data_scaled <- scale(data_unlabelled)
+km.out <- kmeans(data_scaled, centers=8, nstart=100)
+km.clusters <- km.out$cluster
+rownames(data_scaled) <- paste(data$name, 1:dim(data)[1], sep = "_")
+fviz_cluster(list(data=data_scaled, cluster = km.clusters),show.clust.cent = FALSE, labelsize = 0, repel= TRUE)
+final_data <- cbind(data, cluster = km.clusters)
+sorted_data <- final_data[order(final_data$cluster),] 
+table(km.clusters)
+```
+
+#### Hide
+
+#### Show
+
+```{r echo=FALSE}
+a8 <- c(subset(sorted_data, cluster==1)[2])
+b8 <- c(subset(sorted_data, cluster==2)[2])
+c8 <- c(subset(sorted_data, cluster==3)[2])
+d8 <- c(subset(sorted_data, cluster==4)[2])
+e8 <- c(subset(sorted_data, cluster==5)[2])
+f8 <- c(subset(sorted_data, cluster==6)[2])
+g8 <- c(subset(sorted_data, cluster==7)[2])
+h8 <- c(subset(sorted_data, cluster==8)[2])
+list(a8, b8, c8, d8, e8, f8, g8, h8)
+```
