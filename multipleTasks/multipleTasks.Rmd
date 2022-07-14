@@ -33,8 +33,6 @@ library(knitr)
   df <- results_scaled_labelled
 ```
 
-# Subject
-
 ## Row {.tabset .tabset-fade}
 
 ### **Task 1**
