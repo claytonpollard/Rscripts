@@ -61,12 +61,12 @@ server <- function(input, output, session) {
   output$plot3 <- renderPlot({
     i <- ggplot(individualDataMark(), aes(x = as.numeric(row.names(individualDataMark())),y=mark), mark) +
       geom_bar(stat="identity", fill="#ABCDEF") +
-      geom_line(data=individualDataZScore(), aes(x=as.numeric(row.names(individualDataMark())), y=(17.5*zscore+50)),stat="identity",color="red") +
+      geom_line(data=individualDataZScore(), aes(x=as.numeric(row.names(individualDataMark())), y=(12.5*zscore+50)),stat="identity",color="red") +
       xlab("Task") +
       scale_y_continuous(
         limits = c(0,100),
         name = "Percentage",
-        sec.axis = sec_axis(~./17.5-(50/17.5),name="Z-Score")
+        sec.axis = sec_axis(~./12.5-(50/12.5),name="Z-Score")
       ) +
       scale_x_continuous(
         labels = c(NA, 1, NA, 2, NA),
@@ -94,7 +94,7 @@ ui <- fluidPage(
             ),
         mainPanel(
           tabsetPanel(
-            tabPanel("Percantages", plotOutput("plot1")), 
+            tabPanel("Percentages", plotOutput("plot1")), 
             tabPanel("Z-Scores", plotOutput("plot2")),
             tabPanel("Historic", plotOutput("plot3"))
           )

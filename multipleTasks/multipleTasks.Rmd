@@ -1,0 +1,189 @@
+---
+title: "Student Profiles"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: cerulean
+---
+
+```{r echo=FALSE}
+outstanding_lower_boundary <- 1.5
+high_lower_boundary <- .5
+basic_upper_boundary <- -.5
+limited_upper_boundary <- -1.5
+```
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(plotly)
+library(knitr)
+
+  results <- read.csv(file="./results.csv")
+  results_unlabelled <- results[4:10]
+  results_scaled <- scale(results_unlabelled)
+  results_scaled_labelled <- cbind(results[1:10],results_scaled)
+  names(results_scaled_labelled)[11] <- 'task1_zscore'
+  names(results_scaled_labelled)[12] <- 'task2_zscore'
+  names(results_scaled_labelled)[13] <- 'task3_zscore'
+  names(results_scaled_labelled)[14] <- 'task4_zscore'
+  names(results_scaled_labelled)[15] <- 'task5_zscore'
+  names(results_scaled_labelled)[16] <- 'task6_zscore'
+  names(results_scaled_labelled)[17] <- 'task7_zscore'
+  results_scaled_labelled$avg_zscore <- rowMeans(results_scaled_labelled[11:17],na.rm=TRUE)
+  df <- results_scaled_labelled
+```
+
+# Subject
+
+## Row {.tabset .tabset-fade}
+
+### **Task 1**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task1_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 2**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task2_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 3**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task3_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 4**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task4_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 5**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task5_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 6**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task6_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+### **Task 7**
+
+```{r}
+ggplotly({
+  p_subject <- ggplot(df, aes(avg_zscore, task7_zscore, color = class)) + 
+  geom_point(size=1, aes(text = paste0("Name: ", first_name, " ", last_name))) +
+  theme_bw() + 
+  geom_abline(slope=1, color="black", linetype=1, size=.5)
+  
+  ggplotly(p_subject) %>% config(displayModeBar = F) %>% layout(hoverlabel=list(bgcolor="white"))
+})
+```
+
+## Row {.tabset .tabset-fade}
+
+### **Outstanding**
+
+Students (z-score greater than `r outstanding_lower_boundary`)
+
+```{r}
+kable(
+  (subset(df[, c(1:10,18)], avg_zscore > outstanding_lower_boundary)), align = "lllcccccccr"
+)
+```
+
+------------------------------------------------------------------------
+
+### **High**
+
+Students (z-score from `r high_lower_boundary` to `r outstanding_lower_boundary`)
+
+```{r}
+kable(
+  subset(df[, c(1:10,18)], avg_zscore <= outstanding_lower_boundary & avg_zscore > high_lower_boundary), align = "lllcccccccr"
+)
+```
+
+------------------------------------------------------------------------
+
+### **Sound**
+
+Students (z-score `r basic_upper_boundary` to `r high_lower_boundary`)
+
+```{r}
+kable(
+  subset(df[, c(1:10,18)], avg_zscore <= high_lower_boundary & avg_zscore > basic_upper_boundary), align = "lllcccccccr"
+)
+```
+
+------------------------------------------------------------------------
+
+### **Basic**
+
+Students (z-score `r limited_upper_boundary` to `r basic_upper_boundary`)
+
+```{r}
+kable(
+  subset(df[, c(1:10,18)], avg_zscore <= basic_upper_boundary & avg_zscore > limited_upper_boundary), align = "lllcccccccr"
+)
+```
+
+------------------------------------------------------------------------
+
+### **Limited**
+
+Students (z-score less than `r limited_upper_boundary`)
+
+```{r}
+kable(
+  subset(df[, c(1:10,18)], avg_zscore <= limited_upper_boundary), align = "lllcccccccr"
+)
+```

@@ -27,6 +27,7 @@ poor <- -1.5
 ```
 
 ## Cohort Results
+
 ```{r echo=FALSE}
 theme_set(theme_bw())
 y9all <- ggplot(data, aes(task1, task2, color = class, label = name)) + 
@@ -64,7 +65,7 @@ poorz1 <- subset(data_scaled_names, (task1_zscore+task2_zscore)/2<poor)
 poorz1
 ```
 
-## Interactive Chart
+### Interactive Chart
 ```{r echo=FALSE}
 INT <- 
   ggplot(data, aes(task1, task2, color = class)) + 
