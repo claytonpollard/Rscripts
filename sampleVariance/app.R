@@ -6,12 +6,12 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       div(style = "width:100%;", actionButton("sampleButton", "Get 1 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton5", "Get 5 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton10", "Get 10 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton50", "Get 50 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton100", "Get 100 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton500", "Get 500 Sample of 50", style = "width:100%; text-align:center;")),
-      div(style = "width:100%;", actionButton("sampleButton1000", "Get 1000 Sample of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton5", "Get 5 Samples of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton10", "Get 10 Samples of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton50", "Get 50 Samples of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton100", "Get 100 Samples of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton500", "Get 500 Samples of 50", style = "width:100%; text-align:center;")),
+      div(style = "width:100%;", actionButton("sampleButton1000", "Get 1000 Samples of 50", style = "width:100%; text-align:center;")),
       tags$hr(),
       verbatimTextOutput("popVariance"),
       tags$hr(),
